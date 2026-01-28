@@ -1,0 +1,143 @@
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity ID_EX_Reg is
+  port (
+    clk           : in std_logic;
+    swap_in       : in std_logic;
+    swap_out      : out std_logic;
+    out_in        : in std_logic;
+    out_out       : out std_logic;
+    call_in       : in std_logic;
+    call_out      : out std_logic;
+    imm_in        : in std_logic;
+    imm_out       : out std_logic;
+    buffer_in     : in std_logic;
+    buffer_out    : out std_logic;
+    flagEn_in     : in std_logic_vector(2 downto 0);
+    flagEn_out    : out std_logic_vector(2 downto 0);
+    flagReset_in  : in std_logic_vector(2 downto 0);
+    flagReset_out : out std_logic_vector(2 downto 0);
+    setCarry_in   : in std_logic;
+    setCarry_out  : out std_logic;
+    inc_in        : in std_logic;
+    inc_out       : out std_logic;
+    SP_in         : in std_logic_vector(1 downto 0);
+    SP_out        : out std_logic_vector(1 downto 0);
+    WB_in         : in std_logic_vector(1 downto 0);
+    WB_out        : out std_logic_vector(1 downto 0);
+    Mem_in        : in std_logic_vector (1 downto 0);
+    Mem_out       : out std_logic_vector (1 downto 0);
+    EX_in         : in std_logic_vector (2 downto 0);
+    EX_out        : out std_logic_vector (2 downto 0);
+    Rd_in         : in std_logic_vector(2 downto 0);
+    Rd_out        : out std_logic_vector(2 downto 0);
+    readData1_in  : in std_logic_vector(31 downto 0);
+    readData1_out : out std_logic_vector(31 downto 0);
+    readData2_in  : in std_logic_vector(31 downto 0);
+    readData2_out : out std_logic_vector(31 downto 0);
+    Rs1_in        : in std_logic_vector(2 downto 0);
+    Rs1_out       : out std_logic_vector(2 downto 0);
+    Rs2_in        : in std_logic_vector(2 downto 0);
+    Rs2_out       : out std_logic_vector(2 downto 0);
+    flags_in      : in std_logic_vector(2 downto 0);
+    flags_out     : out std_logic_vector(2 downto 0);
+    INT_in        : in std_logic;
+    INT_out       : out std_logic;
+    ID_EX_Flush : in std_logic
+  );
+end entity ID_EX_Reg;
+
+architecture rtl of ID_EX_Reg is
+  signal swap      : std_logic                     := '0';
+  signal out_s     : std_logic                     := '0';
+  signal call      : std_logic                     := '0';
+  signal imm       : std_logic                     := '0';
+  signal buff      : std_logic                     := '0';
+  signal flagEn    : std_logic_vector(2 downto 0)  := (others => '0');
+  signal flagReset : std_logic_vector(2 downto 0)  := (others => '0');
+  signal setCarry  : std_logic                     := '0';
+  signal inc       : std_logic                     := '0';
+  signal SP        : std_logic_vector(1 downto 0)  := (others => '0');
+  signal WB        : std_logic_vector(1 downto 0)  := (others => '0');
+  signal Mem       : std_logic_vector (1 downto 0) := (others => '0');
+  signal EX        : std_logic_vector (2 downto 0) := (others => '0');
+  signal Rd        : std_logic_vector(2 downto 0)  := (others => '0');
+  signal readData1 : std_logic_vector(31 downto 0) := (others => '0');
+  signal readData2 : std_logic_vector(31 downto 0) := (others => '0');
+  signal Rs1       : std_logic_vector(2 downto 0)  := (others => '0');
+  signal Rs2       : std_logic_vector(2 downto 0)  := (others => '0');
+  signal flags     : std_logic_vector(2 downto 0)  := (others => '0');
+  signal INT        : std_logic:= '0';
+begin
+  process (clk)
+  begin
+    if rising_edge(clk) then
+      if ID_EX_Flush = '1' then
+        swap      <= '0';
+        out_s     <= '0';
+        call      <= '0';
+        imm       <= '0';
+        buff      <= '0';
+        flagEn    <= (OTHERS => '0');
+        flagReset <= (OTHERS => '0');
+        setCarry  <= '0';
+        inc       <= '0';
+        SP        <=(OTHERS => '0');
+        WB        <=(OTHERS => '0');
+        Mem       <= (OTHERS => '0');
+        EX        <=(OTHERS => '0');
+        Rd        <=(OTHERS => '0');
+        readData1 <= (OTHERS => '0');
+        readData2 <= (OTHERS => '0');
+        Rs1       <= (OTHERS => '0');
+        Rs2       <= (OTHERS => '0');
+        flags     <= (OTHERS => '0');
+        INT       <= '0';
+      else
+      swap      <= swap_in;
+      out_s     <= out_in;
+      call      <= call_in;
+      imm       <= imm_in;
+      buff      <= buffer_in;
+      flagEn    <= flagEn_in;
+      flagReset <= flagReset_in;
+      setCarry  <= setCarry_in;
+      inc       <= inc_in;
+      SP        <= SP_in;
+      WB        <= WB_in;
+      Mem       <= Mem_in;
+      EX        <= EX_in;
+      Rd        <= Rd_in;
+      readData1 <= readData1_in;
+      readData2 <= readData2_in;
+      Rs1       <= Rs1_in;
+      Rs2       <= Rs2_in;
+      flags     <= flags_in;
+      INT       <= INT_in;
+      end if;
+    end if;
+  end process;
+  swap_out      <= swap;
+  out_out       <= out_s;
+  call_out      <= call;
+  imm_out       <= imm;
+  buffer_out    <= buff;
+  flagEn_out    <= flagEn;
+  flagReset_out <= flagReset;
+  setCarry_out  <= setCarry;
+  inc_out       <= inc;
+  SP_out        <= SP;
+  WB_out        <= WB;
+  Mem_out       <= Mem;
+  EX_out        <= EX;
+  Rd_out        <= Rd;
+  readData1_out <= readData1;
+  readData2_out <= readData2;
+  Rs1_out       <= Rs1;
+  Rs2_out       <= Rs2;
+  flags_out     <= flags;
+  INT_out       <= INT;
+end architecture rtl;
